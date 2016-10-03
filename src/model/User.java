@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public class User {
     
-    private String SERVER_IP = "127.0.0.1";
-    private int SERVER_PORT = 2009;
+    private static String SERVER_IP = "127.0.0.1";
+    private static int SERVER_PORT = 2009;
     
     private Thread connexion;
     
@@ -27,11 +27,30 @@ public class User {
     public User(String pseudo) throws IOException {
         this.pseudo = pseudo;         
     }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    
     
     public static void main(String[]args) throws IOException{
         User test = new User("test");
         UserController ucon = new UserController(test);
-        ucon.connectTo("127.0.0.1", 2009);
+        ucon.connectTo(SERVER_IP, SERVER_PORT);
+        ucon.userIdentification();
     }
     
     

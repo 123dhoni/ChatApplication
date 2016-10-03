@@ -24,7 +24,7 @@ public class AcceptConnection implements Runnable {
 		public AcceptConnection(ChatServer chat, String login, String mdp) throws IdentificationException {
 			// TODO Auto-generated constructor stub
 			this.chat=chat;
-			if(!chat.canConnect(login, mdp)) throw new IdentificationException(login,mdp);
+			//if(!chat.canConnect(login, mdp)) throw new IdentificationException(login,mdp);
 			//System.out.println("Allan connect� "+chat.getSocketServer().getLocalPort());
 		
 		}
@@ -32,15 +32,15 @@ public class AcceptConnection implements Runnable {
 		public void run(){
 			System.out.println("Connexion");
 			try{
-				while(true){
-					//On r�cupere la socket de la premi�re connexion
-					this.socket=chat.getSocketServer().accept();	
-					System.out.println("Socket r�cup�r�"); 
-					
-				}
+                            while(true){
+                                    //On r�cupere la socket de la premi�re connexion
+                                    this.socket=chat.getSocketServer().accept();	
+                                    System.out.println("Socket r�cup�r�"); 
+
+                            }
 				
 			}catch(IOException e){
-				System.out.println(e);
+                            System.out.println(e);
 			}
 		}
 }
