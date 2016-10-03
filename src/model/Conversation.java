@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * @author qmatejka
  */
-public class Conversation {
+public class Conversation{
     
     private UUID id;
     private String title;
@@ -30,6 +30,40 @@ public class Conversation {
             this.title += users.get(i).getPseudo();
         }
     }
-
     
+    public void addUser(User u){
+        users.add(u);
+    }
+    
+    public void addMessage(Message m){
+        messages.add(m);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Stack<Message> getMessages() {
+        return messages;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+    
+    @Override
+    public String toString(){
+        Message last = messages.pop();
+        String desc = "|************************\n"
+                    + "| " + title + "\n"
+                    + "|************************\n"
+                    + "|\n"
+                    + "|" + last.getSender() + ": " + last.getContent();
+        return desc;
+    }
+
 }

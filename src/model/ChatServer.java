@@ -21,7 +21,7 @@ public class ChatServer {
 	public static void main(String[] args) {
 		try {
                     ChatServer myServer = new ChatServer(2009);
-                    myServer.waitingForClients();
+                    myServer.waitsForClients();
 		} catch (IdentificationException | IOException e) {
                     System.out.println(e.getMessage());
 		}
@@ -37,10 +37,11 @@ public class ChatServer {
             initClients();
 	}
 
-        public void waitingForClients() throws IOException{
+        public void waitsForClients() throws IOException{
             Socket s;
             while(true){
                 s = socketServer.accept();
+                linkClient(s);
                 Thread connection = new Thread(new ClientAuthentification(s, clientLoginPassword));
 		connection.start();
             }
@@ -49,6 +50,7 @@ public class ChatServer {
 	public void linkClient(Socket client){
             this.socketClients.add(client);
 	}
+        
 	/**
 	 * @return Returns the chatServer.
 	 */

@@ -26,6 +26,10 @@ public class ClientAuthentification implements Runnable{
     private boolean authentifier = false;
     private Socket socket = null;
     private HashMap<String, String> clientsPasswords;
+    private Scanner sc;
+    private PrintWriter output = null;
+    private BufferedReader input = null;	
+    private String login = null, password;
 
     /**
      * Reception login et mot de passe client 
@@ -41,13 +45,10 @@ public class ClientAuthentification implements Runnable{
     
     @Override
     public void run() {
-        PrintWriter output = null;
-	BufferedReader input = null;	
-        String login = null, password;
         try {
             output = new PrintWriter(socket.getOutputStream());
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            Scanner sc = new Scanner(System.in);
+            sc = new Scanner(System.in);
             
 
             while(!authentifier ){
@@ -78,6 +79,15 @@ public class ClientAuthentification implements Runnable{
     public boolean checkUser(String login, String password) throws IOException{
         return clientsPasswords.containsKey(login)&&
                clientsPasswords.get(login).equals(password);
+    }
+    
+    public void userSummary() throws IOException{
+        output.println("Choose a conversation : \n"
+                + "1 - Conversation with test");
+        output.flush();
+        String choice = input.readLine();
+        if (Integer.valueOf(choice). == 1)
+            
     }
     
 }
