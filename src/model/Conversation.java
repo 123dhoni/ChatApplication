@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * @author qmatejka
  */
-public class Conversation{
+public class Conversation {
     
     private UUID id;
     private String title;
