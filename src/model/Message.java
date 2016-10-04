@@ -14,5 +14,9 @@ public interface Message {
     public Object getContent();
     
     public User getSender();
+
+    @Override
+    public String toString();
+    
     
 }

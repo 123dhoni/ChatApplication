@@ -66,6 +66,11 @@ public class ClientAuthentification implements Runnable{
                     output.flush();
                 }
             }
+            String msg ="";
+            while(true){
+                msg = input.readLine();
+                System.out.println(msg);
+            }
         } catch (IOException e) {
             System.err.println(login+" ne répond pas !");
         }

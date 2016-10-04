@@ -50,7 +50,9 @@ public class User {
         User test = new User("test");
         UserController ucon = new UserController(test);
         ucon.connectTo(SERVER_IP, SERVER_PORT);
-        ucon.userIdentification();
+        if(ucon.userIdentification())
+            ucon.startChat();
+        
     }
     
     

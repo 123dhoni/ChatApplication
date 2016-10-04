@@ -29,4 +29,11 @@ public class StringMessage implements Message{
         return content;
     }
 
+    @Override
+    public String toString() {
+        return "StringMessage{" + sender.getPseudo() + ": " + content + '}';
+    }
+    
+    
+
 }

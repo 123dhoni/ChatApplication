@@ -8,9 +8,13 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 
 /**
@@ -21,6 +25,8 @@ public class UserController {
     
     private User user;
     private Socket socket = null;
+    private PrintWriter output;
+    
 
     public UserController(User user) {
         this.user = user;
@@ -33,7 +39,7 @@ public class UserController {
     }
     
     public boolean userIdentification() throws IOException{
-        PrintWriter output = new PrintWriter(socket.getOutputStream());
+        output = new PrintWriter(socket.getOutputStream());
 	BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
 	Scanner sc = new Scanner(System.in);
 	boolean connect = false;
@@ -51,7 +57,7 @@ public class UserController {
             output.flush();
 
             if(input.readLine().equals("connecte")){
-                System.out.println("Je suis connecté "); 
+                System.out.println("Je suis connecté"); 
                 connect = true;
             } else {
                 System.err.println("Vos informations sont incorrectes "); 
@@ -59,5 +65,14 @@ public class UserController {
         }
         
         return true;
+    }
+    
+    //Création des threads emissions receptions
+    public void startChat(){
+        System.out.println("Bienvenue dans la salle de chat " + user.getPseudo() + "!");
+        Thread service = new Thread(new ClientChatService(user, socket, output));
+        System.out.println(service.getState());
+        service.start();
+        System.out.println(service.getState());
     }
 }
