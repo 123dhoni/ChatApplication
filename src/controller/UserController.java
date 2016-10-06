@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Message;
+import model.StringMessage;
 import model.User;
 
 /**
@@ -25,8 +27,8 @@ public class UserController {
     
     private User user;
     private Socket socket = null;
-    private PrintWriter output;
-    
+    private ObjectInputStream input = null;
+    private ObjectOutputStream output = null;
 
     public UserController(User user) {
         this.user = user;
@@ -38,26 +40,23 @@ public class UserController {
         System.out.println("Connexion réseau établie!");
     }
     
-    public boolean userIdentification() throws IOException{
-        output = new PrintWriter(socket.getOutputStream());
-	BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
+    public boolean userIdentification() throws IOException, ClassNotFoundException{
+        input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());	
 	Scanner sc = new Scanner(System.in);
 	boolean connect = false;
         String login, password;
         
         while(!connect){
-            System.out.println(input.readLine());
+            System.out.println(readMessage());
             login = sc.nextLine();
-            output.println(login);
-            output.flush();
-
-            System.out.println(input.readLine());
+            System.out.println(readMessage());
             password = sc.nextLine();
-            output.println(password);
+            output.writeObject(new StringMessage(user.getPseudo(), login + "/" + password));
             output.flush();
 
-            if(input.readLine().equals("connecte")){
-                System.out.println("Je suis connecté"); 
+            if(readMessage().equals("connecte")){
+                user.setPseudo(login);
                 connect = true;
             } else {
                 System.err.println("Vos informations sont incorrectes "); 
@@ -70,9 +69,16 @@ public class UserController {
     //Création des threads emissions receptions
     public void startChat(){
         System.out.println("Bienvenue dans la salle de chat " + user.getPseudo() + "!");
-        Thread service = new Thread(new ClientChatService(user, socket, output));
-        System.out.println(service.getState());
+        Thread service = new Thread(new ClientChatService(user, socket, input, output));
         service.start();
-        System.out.println(service.getState());
+    }
+    
+    public String readMessage(){
+        try {
+            return (String)((StringMessage)input.readObject()).getContent();
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "Error message";
     }
 }

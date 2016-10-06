@@ -3,7 +3,7 @@ package model;
 
 import controller.IdentificationException;
 import controller.AcceptConnection;
-import controller.ClientAuthentification;
+import controller.ServerClientAuthentification;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,7 +41,7 @@ public class ChatServer {
             Socket s;
             while(true){
                 s = socketServer.accept();
-                Thread connection = new Thread(new ClientAuthentification(s, clientLoginPassword));
+                Thread connection = new Thread(new ServerClientAuthentification(s, clientLoginPassword));
 		connection.start();
             }
         }

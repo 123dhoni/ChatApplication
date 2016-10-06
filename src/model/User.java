@@ -17,16 +17,10 @@ public class User {
     
     private static String SERVER_IP = "127.0.0.1";
     private static int SERVER_PORT = 2009;
-    
-    private Thread connexion;
-    
+        
     private int ID;
     private String pseudo;
     private String description;
-
-    public User(String pseudo) throws IOException {
-        this.pseudo = pseudo;         
-    }
 
     public String getPseudo() {
         return pseudo;
@@ -46,9 +40,9 @@ public class User {
     
     
     
-    public static void main(String[]args) throws IOException{
-        User test = new User("test");
-        UserController ucon = new UserController(test);
+    public static void main(String[]args) throws IOException, ClassNotFoundException{
+        User user = new User();
+        UserController ucon = new UserController(user);
         ucon.connectTo(SERVER_IP, SERVER_PORT);
         if(ucon.userIdentification())
             ucon.startChat();

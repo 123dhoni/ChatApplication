@@ -5,23 +5,27 @@
  */
 package model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author qmatejka
  */
-public class StringMessage implements Message{
-    
-    private User sender;
+public class StringMessage implements Serializable, Message{
+
+    private static final long serialVersionUID = 1L;
+      
+    private String senderPseudo;
     private String content;
 
-    public StringMessage(User sender, String content) {
-        this.sender = sender;
+    public StringMessage(String sender, String content) {
+        this.senderPseudo = sender;
         this.content = content;
     }
 
     @Override
-    public User getSender() {
-        return sender;
+    public String getSender() {
+        return senderPseudo;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class StringMessage implements Message{
 
     @Override
     public String toString() {
-        return "StringMessage{" + sender.getPseudo() + ": " + content + '}';
+        return "StringMessage{" + senderPseudo + ": " + content + '}';
     }
     
     

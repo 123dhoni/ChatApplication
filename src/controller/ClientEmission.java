@@ -7,7 +7,6 @@ package controller;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,11 +19,10 @@ import model.User;
  */
 public class ClientEmission implements Runnable{
     
-    //private ObjectOutputStream sOutput;
-    private PrintWriter sOutput;
+    private ObjectOutputStream sOutput;
     private User user;
 
-    public ClientEmission(PrintWriter sOutput, User user) {
+    public ClientEmission(ObjectOutputStream sOutput, User user) {
         this.sOutput = sOutput;
         this.user = user;
         System.out.println("Constructor de l'emission");
@@ -36,8 +34,12 @@ public class ClientEmission implements Runnable{
         Scanner sc = new Scanner(System.in);
         String msg = sc.nextLine();
         while(!msg.equals("/quit")){
-            sOutput.println(msg);
-            sOutput.flush();
+            try {
+                sOutput.writeObject(new StringMessage(user.getPseudo(), msg));
+                sOutput.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientEmission.class.getName()).log(Level.SEVERE, null, ex);
+            }
             System.out.print(">");
             msg = sc.nextLine();
         }

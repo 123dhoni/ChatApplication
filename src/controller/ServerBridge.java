@@ -32,7 +32,7 @@ public class ServerBridge implements Runnable{
         while(true){
             try {
                 m = (Message)in.readObject();
-                System.out.println("Message recu de " + m.getSender().getPseudo());
+                System.out.println("Message recu de " + m.getSender());
                 out.writeObject(m);
                 System.out.println("Message transféré");
             } catch (IOException e) {

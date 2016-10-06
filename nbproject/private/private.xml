@@ -4,16 +4,16 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ServerBridge.java</file>
-            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/AcceptConnection.java</file>
-            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ConversationController.java</file>
+            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ServerClientAuthentification.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/model/User.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/model/ChatServer.java</file>
+            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ClientChatService.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ClientReception.java</file>
+            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/model/Message.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/UserController.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ClientEmission.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/model/StringMessage.java</file>
             <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/model/Conversation.java</file>
-            <file>file:/C:/Users/qmatejka/workspace/ChatApplication/src/controller/ClientAuthentification.java</file>
         </group>
     </open-files>
 </project-private>

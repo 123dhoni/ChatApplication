@@ -13,7 +13,7 @@ public interface Message {
     
     public Object getContent();
     
-    public User getSender();
+    public String getSender();
 
     @Override
     public String toString();

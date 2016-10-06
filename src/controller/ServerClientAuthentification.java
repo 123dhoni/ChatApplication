@@ -8,24 +8,30 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Message;
+import model.StringMessage;
 
 /**
  *
  * @author qmatejka
  */
-public class ClientAuthentification implements Runnable{
+public class ServerClientAuthentification implements Runnable{
     
     private boolean authentifier = false;
     private Socket socket = null;
     private HashMap<String, String> clientsPasswords;
     private Scanner sc;
-    private PrintWriter output = null;
-    private BufferedReader input = null;	
-    private String login = null, password;
+    private ObjectOutputStream output = null;
+    private ObjectInputStream input = null;	
+    private String login, password;
 
     /**
      * Reception login et mot de passe client 
@@ -34,7 +40,7 @@ public class ClientAuthentification implements Runnable{
      * @param s 
      * @param dataBank 
      */
-    public ClientAuthentification(Socket s, HashMap<String, String> dataBank) {
+    public ServerClientAuthentification(Socket s, HashMap<String, String> dataBank) {
         socket = s;
         clientsPasswords = dataBank;
     }
@@ -42,51 +48,53 @@ public class ClientAuthentification implements Runnable{
     @Override
     public void run() {
         try {
-            output = new PrintWriter(socket.getOutputStream());
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            output = new ObjectOutputStream(socket.getOutputStream());
+            input = new ObjectInputStream(socket.getInputStream());
             sc = new Scanner(System.in);
-            
+            String userInfos = null;
 
             while(!authentifier ){
-                output.println("LOGIN : ");
+                output.writeObject(new StringMessage("", "LOGIN : "));
                 output.flush();
-                login = input.readLine();
 
-                output.println("PASSWORD : ");
+                output.writeObject(new StringMessage("", "PASSWORD : "));
                 output.flush();
-                password = input.readLine();
+                
+                userInfos = (String)((StringMessage)input.readObject()).getContent();
 
-                if(checkUser(login, password)){
+                if(checkUser(userInfos)){
                     System.out.println(login + " connecté "); 
                     authentifier = true;
-                    output.println("connecte");
+                    output.writeObject(new StringMessage(null, "connecte"));
                     output.flush();
                 } else {
-                    output.println("Vos informations sont incorrectes "); 
+                    output.writeObject(new StringMessage(null, "Vos informations sont incorrectes "));
                     output.flush();
                 }
             }
             String msg ="";
             while(true){
-                msg = input.readLine();
+                msg = ((StringMessage)input.readObject()).toString();
                 System.out.println(msg);
             }
         } catch (IOException e) {
-            System.err.println(login+" ne répond pas !");
+            System.err.println("user ne répond pas !");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ServerClientAuthentification.class.getName()).log(Level.SEVERE, null, ex);
         }
 	
     }
     
-    public boolean checkUser(String login, String password) throws IOException{
+    public boolean checkUser(String userInfos) throws IOException{
+        String[] values = userInfos.split("/");
+        login = values[0];
+        password = values[1];
         return clientsPasswords.containsKey(login)&&
                clientsPasswords.get(login).equals(password);
     }
     
     public void userSummary() throws IOException{
-        output.println("Choose a conversation : \n"
-                + "1 - Conversation with test");
-        output.flush();
-        String choice = input.readLine();
+
         
     }
     

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Message;
+import model.StringMessage;
 
 /**
  *
@@ -26,16 +26,18 @@ public class ClientReception implements Runnable{
     
     @Override
     public void run() {
-        while(true){
-            try {
-                Message msg = (Message)sInput.readObject();
-                System.out.println(msg.toString());
-            } catch(IOException e){
-
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
+            String msg="";
+            while(true){
+                try {
+                    msg = ((StringMessage)sInput.readObject()).toString();
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    System.out.println(msg);
             }
-        }
+        
     }
     
     
