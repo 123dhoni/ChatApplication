@@ -1,3 +1,4 @@
-Shiromaar;admin
+shiro;que
 test;test
 ray;lol
+admin;admin

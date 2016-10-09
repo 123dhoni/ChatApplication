@@ -5,17 +5,15 @@
  */
 package controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.ChatServer;
 import model.Message;
 import model.StringMessage;
 
@@ -28,10 +26,11 @@ public class ServerClientAuthentification implements Runnable{
     private boolean authentifier = false;
     private Socket socket = null;
     private HashMap<String, String> clientsPasswords;
-    private Scanner sc;
     private ObjectOutputStream output = null;
     private ObjectInputStream input = null;	
     private String login, password;
+    
+    private ChatServer serv;
 
     /**
      * Reception login et mot de passe client 
@@ -40,9 +39,10 @@ public class ServerClientAuthentification implements Runnable{
      * @param s 
      * @param dataBank 
      */
-    public ServerClientAuthentification(Socket s, HashMap<String, String> dataBank) {
+    public ServerClientAuthentification(Socket s, HashMap<String, String> dataBank, ChatServer server) {
         socket = s;
         clientsPasswords = dataBank;
+        serv = server;
     }
     
     @Override
@@ -50,7 +50,7 @@ public class ServerClientAuthentification implements Runnable{
         try {
             output = new ObjectOutputStream(socket.getOutputStream());
             input = new ObjectInputStream(socket.getInputStream());
-            sc = new Scanner(System.in);
+            Scanner sc = new Scanner(System.in);
             String userInfos = null;
 
             while(!authentifier ){
@@ -67,15 +67,17 @@ public class ServerClientAuthentification implements Runnable{
                     authentifier = true;
                     output.writeObject(new StringMessage(null, "connecte"));
                     output.flush();
+                    serv.addOutput(login, output);
                 } else {
                     output.writeObject(new StringMessage(null, "Vos informations sont incorrectes "));
                     output.flush();
                 }
             }
-            String msg ="";
+            Message message;
             while(true){
-                msg = ((StringMessage)input.readObject()).toString();
-                System.out.println(msg);
+                message = (Message)input.readObject();
+                System.out.println(((StringMessage)message).toString());
+                serv.broadcast(message);
             }
         } catch (IOException e) {
             System.err.println("user ne répond pas !");
@@ -91,11 +93,6 @@ public class ServerClientAuthentification implements Runnable{
         password = values[1];
         return clientsPasswords.containsKey(login)&&
                clientsPasswords.get(login).equals(password);
-    }
-    
-    public void userSummary() throws IOException{
-
-        
     }
     
 }

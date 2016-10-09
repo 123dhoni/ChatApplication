@@ -25,7 +25,6 @@ public class ClientEmission implements Runnable{
     public ClientEmission(ObjectOutputStream sOutput, User user) {
         this.sOutput = sOutput;
         this.user = user;
-        System.out.println("Constructor de l'emission");
     }
     
     @Override

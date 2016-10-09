@@ -21,7 +21,6 @@ public class ClientReception implements Runnable{
 
     public ClientReception(ObjectInputStream sInput) {
         this.sInput = sInput;
-        System.out.println("Constructor de reception");
     }
     
     @Override
@@ -29,13 +28,12 @@ public class ClientReception implements Runnable{
             String msg="";
             while(true){
                 try {
-                    msg = ((StringMessage)sInput.readObject()).toString();
-                } catch (IOException ex) {
-                    Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
+                    msg = "\t\t\t\t" + ((StringMessage)sInput.readObject()).toString() + "<";
+                    System.out.println(msg);
+                } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    System.out.println(msg);
+                    
             }
         
     }

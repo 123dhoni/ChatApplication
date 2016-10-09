@@ -31,25 +31,8 @@ public class ConversationController implements Runnable{
 
     @Override
     public void run() {
-        Runnable bridge1, bridge2;
-        ObjectInputStream in1, in2;
-        ObjectOutputStream out1, out2;
-        for(int i=0;i<sockets.size()-1;i++){
-            try {
-                in1 = new ObjectInputStream(sockets.get(i).getInputStream());
-                out1 = new ObjectOutputStream(sockets.get(i).getOutputStream());
-                in2 = new ObjectInputStream(sockets.get(i+1).getInputStream());
-                out2 = new ObjectOutputStream(sockets.get(i+1).getOutputStream());
-
-                bridge1 = new ServerBridge(out2, in1);
-                bridge1.run();
-                bridge2 = new ServerBridge(out1, in2);
-                bridge2.run();
-            } catch (IOException ex) {
-                Logger.getLogger(ConversationController.class.getName()).log(Level.SEVERE, null, ex);
-            }
             
-        }
+        
     }
     
     
