@@ -8,6 +8,7 @@ package controller;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Calendar;
 import model.User;
 
 /**
@@ -22,7 +23,7 @@ public class ClientChatService implements Runnable{
     private ObjectOutputStream out;
 
     public ClientChatService(User user, Socket s, ObjectInputStream input, ObjectOutputStream output) {
-        System.out.println("creation service");
+        System.out.println("\t" + Calendar.getInstance().getTime() + " [ Service's Creation]");
         this.user = user;
         this.socket = s;
         in = input;
@@ -37,8 +38,8 @@ public class ClientChatService implements Runnable{
     
     @Override
     public void run() {
-        System.out.println("init streams");
-        System.out.println("streams ok");
+        System.out.println("\t" + Calendar.getInstance().getTime() + " [Streams Initialisation]");
+
         Thread emission = new Thread(new ClientEmission(out, user));
         emission.start();
         Thread reception = new Thread(new ClientReception(in));

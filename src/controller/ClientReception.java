@@ -7,8 +7,13 @@ package controller;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Calendar;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import model.Conversation;
 import model.StringMessage;
 
 /**
@@ -21,6 +26,7 @@ public class ClientReception implements Runnable{
 
     public ClientReception(ObjectInputStream sInput) {
         this.sInput = sInput;
+        System.out.println("\t"+Calendar.getInstance().getTime() +" [Reception's controller]");
     }
     
     @Override
@@ -28,12 +34,26 @@ public class ClientReception implements Runnable{
             String msg="";
             while(true){
                 try {
-                    msg = "\t\t\t\t" + ((StringMessage)sInput.readObject()).toString() + "<";
-                    System.out.println(msg);
-                } catch (IOException | ClassNotFoundException ex) {
+                	Object dataReceived = sInput.readObject();
+                	System.out.println(dataReceived.getClass().getSimpleName());
+                	if(dataReceived.getClass().getSimpleName().equals(StringMessage.class.getSimpleName()))
+                		msg = ((StringMessage)dataReceived).toString();
+                	else if(dataReceived.getClass().getSimpleName().equals(Stack.class.getSimpleName())){
+                		Stack<Conversation> conversations = ((Stack<Conversation>) dataReceived);
+                		msg="\\***** Conversations ****/ \n \t Choose where you want to chat  ! \n";
+                		int i=1;
+                		for (Conversation conversation : conversations) {
+                			msg+=i+". || nbMessages : "+conversation.getMessages().size() +" ||"+conversation.getTitle()+"\n" ;
+							i++;
+						}
+                	}
+                	
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ClientReception.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    
+                    System.out.println("ClientReception :"+ msg);
             }
         
     }

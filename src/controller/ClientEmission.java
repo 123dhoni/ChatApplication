@@ -7,7 +7,9 @@ package controller;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.StringMessage;
@@ -25,6 +27,7 @@ public class ClientEmission implements Runnable{
     public ClientEmission(ObjectOutputStream sOutput, User user) {
         this.sOutput = sOutput;
         this.user = user;
+        System.out.println("\t" + Calendar.getInstance().getTime() + " [Emission's Constructor]");
     }
     
     @Override
@@ -34,7 +37,7 @@ public class ClientEmission implements Runnable{
         String msg = sc.nextLine();
         while(!msg.equals("/quit")){
             try {
-                sOutput.writeObject(new StringMessage(user.getPseudo(), msg));
+                sOutput.writeObject(new StringMessage(user.getPseudo(), msg,UUID.randomUUID()));
                 sOutput.flush();
             } catch (IOException ex) {
                 Logger.getLogger(ClientEmission.class.getName()).log(Level.SEVERE, null, ex);

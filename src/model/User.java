@@ -21,7 +21,12 @@ public class User {
     private int ID;
     private String pseudo;
     private String description;
-
+    public User() {
+		// TODO Auto-generated constructor stub
+	}
+    public User(String pseudo) {
+    	this.pseudo=pseudo;
+	}
     public String getPseudo() {
         return pseudo;
     }
@@ -44,8 +49,7 @@ public class User {
         User user = new User();
         UserController ucon = new UserController(user);
         ucon.connectTo(SERVER_IP, SERVER_PORT);
-        if(ucon.userIdentification())
-            ucon.startChat();
+      
         
     }
     

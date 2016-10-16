@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  *
@@ -17,10 +18,21 @@ public class StringMessage implements Serializable, Message{
       
     private String senderPseudo;
     private String content;
-
-    public StringMessage(String sender, String content) {
+    private UUID idConversation;
+    /**
+     * 
+     * @param sender
+     * 	Name of the User who sent the message
+     * @param content
+     * 	Content of the messsage
+     * @param idConversation
+     * 	Id of the conversation where the message is sent. 
+     * 	The uuid is given by the conversation where the user send the message
+     */
+    public StringMessage(String sender, String content,UUID idConversation) {
         this.senderPseudo = sender;
         this.content = content;
+        this.idConversation=idConversation;
     }
 
     @Override
@@ -35,7 +47,7 @@ public class StringMessage implements Serializable, Message{
 
     @Override
     public String toString() {
-        return "StringMessage{" + senderPseudo + ": " + content + '}';
+        return "StringMessage{" + senderPseudo + ": " + content +" IDConv :"+ this.idConversation+'}';
     }
     
     

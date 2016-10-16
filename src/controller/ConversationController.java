@@ -31,8 +31,7 @@ public class ConversationController implements Runnable{
 
     @Override
     public void run() {
-            
-        
+
     }
     
     

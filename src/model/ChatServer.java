@@ -8,12 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @since 3.2
@@ -30,52 +27,30 @@ public class ChatServer {
 	}
 	
 	private HashMap<String,String> clientLoginPassword;
-        private HashMap<User,ObjectOutputStream> clientOutput;
 	private Stack<Socket> socketClients;
 	private ServerSocket socketServer;
-	
+	private Stack<Conversation> conversations;
 	
 	public ChatServer(int port) throws IdentificationException, IOException  {
             this.socketServer=new ServerSocket(port);
-            this.clientOutput = new HashMap<>();
+
+    		System.out.println(""+Calendar.getInstance().getTime() +" : SERVER'S INITIALISATION ");
             initClients();
+            initConversations();
 	}
 
-        public void addOutput(String login, ObjectOutputStream cOutput){
-            User u = new User();
-            u.setPseudo(login);
-            clientOutput.put(u, cOutput);
-        }
-        
-        public void broadcast(Message msg){
-            ObjectOutputStream cOutput;
-            for(User u:clientOutput.keySet()){
-                if(msg.getSender().equals(u.getPseudo())){}
-                else{
-                    try {
-                        cOutput = clientOutput.get(u);
-                        cOutput.writeObject(msg);
-                        cOutput.flush();
-                    } catch (IOException ex) {
-                        Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
-        
         public void waitingForClients() throws IOException{
             Socket s;
             while(true){
                 s = socketServer.accept();
-                Thread connection = new Thread(new ServerClientAuthentification(s, clientLoginPassword, this));
-		connection.start();
+                Thread connection = new Thread(new ServerClientAuthentification(s, clientLoginPassword,conversations));
+                connection.start();
             }
         }
         
 	public void linkClient(Socket client){
             this.socketClients.add(client);
 	}
-        
 	/**
 	 * @return Returns the chatServer.
 	 */
@@ -93,6 +68,20 @@ public class ChatServer {
                     password = values[1];
                     this.clientLoginPassword.put(login, password);
                 }
-                System.out.println(this.clientLoginPassword.toString());
+                System.out.println("\t"+Calendar.getInstance().getTime() +" : [User hashmap have finished to load.] ");
+                System.out.println("\t\t"+this.clientLoginPassword.toString());
+	}
+	/**
+	 * Init the conversation from a file where Conversation are serialized.
+	 *  We can expect that the server takes time to launch due to data to load.
+	 */
+	private void initConversations(){
+		this.conversations= new Stack<Conversation>();
+		this.conversations.push(new Conversation(new User("Admin"), "Bienvenue"));
+		this.conversations.push(new Conversation(new User("Admin"), "Geek"));
+		this.conversations.push(new Conversation(new User("Admin"), "Wow c'était mieux avant ?"));
+		
+		System.out.println("\t"+Calendar.getInstance().getTime() +" : [Conversations have finished to load.] ");
+		
 	}
 }

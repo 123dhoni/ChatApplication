@@ -5,15 +5,20 @@
  */
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.ChatServer;
+
+import model.Conversation;
 import model.Message;
 import model.StringMessage;
 
@@ -26,11 +31,11 @@ public class ServerClientAuthentification implements Runnable{
     private boolean authentifier = false;
     private Socket socket = null;
     private HashMap<String, String> clientsPasswords;
+    private Scanner sc;
     private ObjectOutputStream output = null;
     private ObjectInputStream input = null;	
     private String login, password;
-    
-    private ChatServer serv;
+    private Stack<Conversation> conversations;
 
     /**
      * Reception login et mot de passe client 
@@ -39,10 +44,10 @@ public class ServerClientAuthentification implements Runnable{
      * @param s 
      * @param dataBank 
      */
-    public ServerClientAuthentification(Socket s, HashMap<String, String> dataBank, ChatServer server) {
+    public ServerClientAuthentification(Socket s, HashMap<String, String> dataBank,Stack<Conversation> conversations) {
         socket = s;
         clientsPasswords = dataBank;
-        serv = server;
+        this.conversations=conversations;
     }
     
     @Override
@@ -50,14 +55,14 @@ public class ServerClientAuthentification implements Runnable{
         try {
             output = new ObjectOutputStream(socket.getOutputStream());
             input = new ObjectInputStream(socket.getInputStream());
-            Scanner sc = new Scanner(System.in);
+            sc = new Scanner(System.in);
             String userInfos = null;
 
             while(!authentifier ){
-                output.writeObject(new StringMessage("", "LOGIN : "));
+                output.writeObject(new StringMessage("", "LOGIN : ",null));
                 output.flush();
 
-                output.writeObject(new StringMessage("", "PASSWORD : "));
+                output.writeObject(new StringMessage("", "PASSWORD : ",null));
                 output.flush();
                 
                 userInfos = (String)((StringMessage)input.readObject()).getContent();
@@ -65,22 +70,24 @@ public class ServerClientAuthentification implements Runnable{
                 if(checkUser(userInfos)){
                     System.out.println(login + " connecté "); 
                     authentifier = true;
-                    output.writeObject(new StringMessage(null, "connecte"));
+                    output.writeObject(new StringMessage(null, "connecte",null));
                     output.flush();
-                    serv.addOutput(login, output);
                 } else {
-                    output.writeObject(new StringMessage(null, "Vos informations sont incorrectes "));
+                    output.writeObject(new StringMessage(null, "Vos informations sont incorrectes ",null));
                     output.flush();
                 }
             }
-            Message message;
+            String msg ="";
+            output.writeObject(this.conversations);
+            output.flush();
+            
             while(true){
-                message = (Message)input.readObject();
-                System.out.println(((StringMessage)message).toString());
-                serv.broadcast(message);
+                msg = ((StringMessage)input.readObject()).toString();
+                System.out.println(msg);
+              //  output.writeObject(new StringMessage("Admin", "test", null));
             }
         } catch (IOException e) {
-            System.err.println("user ne répond pas !");
+            System.err.println("user ne repond pas !");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ServerClientAuthentification.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,6 +100,11 @@ public class ServerClientAuthentification implements Runnable{
         password = values[1];
         return clientsPasswords.containsKey(login)&&
                clientsPasswords.get(login).equals(password);
+    }
+    
+    public void userSummary() throws IOException{
+
+        
     }
     
 }

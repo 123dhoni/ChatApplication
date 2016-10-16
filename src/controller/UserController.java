@@ -5,15 +5,22 @@
  */
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Calendar;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Message;
 import model.StringMessage;
 import model.User;
+import view.UserView;
 
 /**
  *
@@ -25,7 +32,8 @@ public class UserController {
     private Socket socket = null;
     private ObjectInputStream input = null;
     private ObjectOutputStream output = null;
-
+    private UserView view;
+    
     public UserController(User user) {
         this.user = user;
     }
@@ -33,29 +41,24 @@ public class UserController {
     public void connectTo(String serverIP, int serverPort) throws IOException{
         //Connexion au serveur
         socket = new Socket(serverIP, serverPort);
-        System.out.println("Connexion réseau établie!");
+        System.out.println("\t"+Calendar.getInstance().getTime()+ " [Connection established.]" );
     }
     
-    public boolean userIdentification() throws IOException, ClassNotFoundException{
+    public boolean userIdentification(String pseudo,String password) throws IOException, ClassNotFoundException{
         input = new ObjectInputStream(socket.getInputStream());
         output = new ObjectOutputStream(socket.getOutputStream());	
 	Scanner sc = new Scanner(System.in);
 	boolean connect = false;
-        String login, password;
-        
         while(!connect){
-            System.out.println(readMessage());
-            login = sc.nextLine();
-            System.out.println(readMessage());
-            password = sc.nextLine();
-            output.writeObject(new StringMessage(user.getPseudo(), login + "/" + password));
+         
+            output.writeObject(new StringMessage(user.getPseudo(), pseudo + "/" + password,UUID.randomUUID()));
             output.flush();
 
             if(readMessage().equals("connecte")){
-                user.setPseudo(login);
+                user.setPseudo(pseudo);
                 connect = true;
             } else {
-                System.err.println("Vos informations sont incorrectes "); 
+                System.err.println("\t"+Calendar.getInstance().getTime()+ " [Informations are incorrect.Please try again.]" );
             }
         }
         
@@ -76,5 +79,9 @@ public class UserController {
             Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "Error message";
+    }
+    
+    public void attachView(UserView view){
+    	this.view=view;
     }
 }
